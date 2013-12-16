@@ -1,0 +1,56 @@
+ #
+ #   Copyright (C) 2013  Raghavan Santhanam, raghavanil4m@gmail.com, rs3294@columbia.edu
+ #   This was done as part of my MS thesis research at Columbia University, NYC in Fall 2013.
+ #
+ #   README is free software: you can redistribute it and/or modify
+ #   it under the terms of the GNU General Public License as published by
+ #   the Free Software Foundation, either version 3 of the License, or
+ #   (at your option) any later version.
+ #
+ #   README is distributed in the hope that it will be useful,
+ #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ #   GNU General Public License for more details.
+ #
+ #   You should have received a copy of the GNU General Public License
+ #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ #
+
+For using with a real paired device, its ip-address needs to be
+put in the ~/dev_ip_port.conf of the host. The loop delay in
+sensors_emu.c under hardware/libsensors_emu for the accelerometer
+server thread needs to be 100ns. And the poll delay in dummy_poll()
+needs to be 1000us.
+
+For using with remote server, the remote server's ip-address needs
+to be in ~/remote_server_ip_port.conf of the host. The loop
+delay in sensors_emu.c under the already said above path, for
+the accelerometer server has to be 1000ns. And the poll delay in
+dummy_poll() needs to be 80000us.
+
+Qemu with Android-x86 has to be launched with the following command
+to enable port-mapping from the host to guest with the necessary
+changes for the image name, etc
+
+sudo qemu-system-x86_64 -enable-kvm -m 1024 -vga qxl -spice port=5930,
+disable-ticketing -net nic -net user,hostfwd=tcp::4444-:5555,
+hostfwd=tcp::5000-:5000,hostfwd=tcp::5001-:5001,
+hostfwd=tcp::5002-:5002,hostfwd=tcp::5003-:5003,
+hostfwd=tcp::5004-:5004,hostfwd=tcp::5005-:5005,hostfwd=tcp::5006-:5006,
+hostfwd=tcp::5007-:5007,hostfwd=tcp::5008-:5008,hostfwd=tcp::5009-:5009 
+-net nic,model=pcnet -net tap -hda android-x86-jelly-bean.img
+
+Then launch spice in a separate window to get the Android-x86 UI.
+
+If there is a conflict of ports while launching Qemu, then make sure you
+the ports aren't already in use. There may be previously launched instances
+of Qemu runnning using those ports. The userspace "C" programs -
+SensorEmulationClientServer.c and SensorEmulationRemoteServer.c might
+be using those ports as well. So, make sure you launch Qemu to run
+Android-x86 first followed by the userspace "C" program always to avoid
+port-in-use problems. This is a side-effect of port-mapping usage and
+not really a issue.
+
+
+
+
